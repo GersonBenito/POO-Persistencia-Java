@@ -1,6 +1,7 @@
 package com.mycompany.escuela.logica;
 
 import com.mycompany.escuela.persistencia.ControladorPersistencia;
+import java.util.List;
 
 /**
  *
@@ -17,6 +18,41 @@ public class Controlador {
      */
     public void crearAlumno(Alumno alumno){
         controladorPersistencia.crearAlumno(alumno);
+    }
+    
+    /**
+     * Metodo para obtener todos los alumnos
+     * @return 
+     */
+    public List<Alumno> obtenerAlumnos(){
+        List<Alumno> alumnos = controladorPersistencia.obtenerAlumnos();
+        return alumnos;
+    }
+    
+    /**
+     * Metodo para obtener un alumno
+     * @param id del alumno a obtener
+     * @return 
+     */
+    public Alumno obtenerAlumno(int id){
+        Alumno alumno = controladorPersistencia.obtenerAlumno(id);
+        return alumno;
+    }
+    
+    /**
+     * Metodo para eliminar un alumno
+     * @param id del alumno
+     */
+    public void eliminarAlumno(int id){
+        controladorPersistencia.eliminarAlumno(id);
+    }
+    
+    /**
+     * Metodo para actualizar un alumno
+     * @param alumno objeto de la clase Alumno
+     */
+    public void actualizarAlumno(Alumno alumno){
+        controladorPersistencia.actualizarAlumno(alumno);
     }
     
 }
