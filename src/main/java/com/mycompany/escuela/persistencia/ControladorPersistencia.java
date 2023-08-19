@@ -1,6 +1,7 @@
 package com.mycompany.escuela.persistencia;
 import com.mycompany.escuela.logica.Alumno;
 import com.mycompany.escuela.persistencia.exceptions.NonexistentEntityException;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -24,9 +25,12 @@ public class ControladorPersistencia {
      * metodo encargado de obtener todos los alumnos de la base de datos
      * @return 
      */
-    public List<Alumno> obtenerAlumnos(){
+    public ArrayList<Alumno> obtenerAlumnos(){
         List<Alumno> alumnos = alumnoControllerJPA.findAlumnoEntities();
-        return alumnos;
+        
+        // hace un casteo de un list a un ArrayList
+        ArrayList<Alumno> alunmosList = new ArrayList<>(alumnos);
+        return alunmosList;
     }
     
     /**

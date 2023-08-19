@@ -1,6 +1,7 @@
 package com.mycompany.escuela.logica;
 
 import com.mycompany.escuela.persistencia.ControladorPersistencia;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -24,9 +25,11 @@ public class Controlador {
      * Metodo para obtener todos los alumnos
      * @return 
      */
-    public List<Alumno> obtenerAlumnos(){
+    public ArrayList<Alumno> obtenerAlumnos(){
         List<Alumno> alumnos = controladorPersistencia.obtenerAlumnos();
-        return alumnos;
+        // hacer casteo de list
+        ArrayList<Alumno> alumnosList = new ArrayList<>(alumnos);
+        return alumnosList;
     }
     
     /**
