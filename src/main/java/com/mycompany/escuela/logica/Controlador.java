@@ -58,4 +58,27 @@ public class Controlador {
         controladorPersistencia.actualizarAlumno(alumno);
     }
     
+    // metodos para la clase carrera
+    public void crearCarrera(Carrera carrera){
+        controladorPersistencia.crearCarrera(carrera);
+    }
+    
+    public ArrayList<Carrera> obtenerCarreras(){
+        ArrayList<Carrera> carreras = controladorPersistencia.obtenerCarreras();
+        return carreras;
+    }
+    
+    public Carrera obtenerCarrera(int id){
+        Carrera carrera = controladorPersistencia.obtenerCarrera(id);
+        return carrera;
+    }
+    
+    public void actualizarCarrera(Carrera carrera){
+        controladorPersistencia.actualizarCarrera(carrera);
+    }
+    
+    public void eliminarCarrera(int id){
+        controladorPersistencia.eliminarCarrera(id);
+    }
+    
 }

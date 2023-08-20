@@ -1,5 +1,6 @@
 package com.mycompany.escuela.persistencia;
 import com.mycompany.escuela.logica.Alumno;
+import com.mycompany.escuela.logica.Carrera;
 import com.mycompany.escuela.persistencia.exceptions.NonexistentEntityException;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,6 +13,7 @@ public class ControladorPersistencia {
     
     // creamos una instancia del contola de alumnos de JPA
     AlumnoJpaController alumnoControllerJPA = new AlumnoJpaController();
+    CarreraJpaController carreraControllerJPA = new CarreraJpaController();
     
     /**
      * metodo encargado de crear un nuevo alumno
@@ -66,6 +68,40 @@ public class ControladorPersistencia {
             System.out.println("Alumno actualizado correctamente");
         }catch(Exception e){
             System.out.println("Error al actualizar: " + e.getMessage());
+        }
+    }
+
+    // metodos para la clase de carrera
+    public void crearCarrera(Carrera carrera) {
+        carreraControllerJPA.create(carrera);
+    }
+    
+    public ArrayList<Carrera> obtenerCarreras(){
+        List<Carrera> carreras = carreraControllerJPA.findCarreraEntities();
+        ArrayList<Carrera> carrerasList = new ArrayList<>(carreras);
+        return carrerasList;
+    }
+    
+    public Carrera obtenerCarrera(int id){
+        Carrera carrera = carreraControllerJPA.findCarrera(id);
+        return carrera;
+    }
+    
+    public void actualizarCarrera(Carrera carrera){
+        try{
+            carreraControllerJPA.edit(carrera);
+            System.out.println("Carrera actualizado correctamente");
+        }catch(Exception e){
+            System.out.println("Error ala ctualizar una carrera: " + e.getMessage());
+        }
+    }
+    
+    public void eliminarCarrera(int id){
+        try{
+            carreraControllerJPA.destroy(id);
+            System.out.println("Carrera eliminado correctamente");
+        }catch(NonexistentEntityException e){
+            System.out.println("Error al eliminar " + e.getMessage());
         }
     }
 }

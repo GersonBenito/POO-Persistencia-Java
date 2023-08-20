@@ -6,6 +6,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
@@ -19,21 +20,24 @@ public class Alumno implements Serializable {
     
     @Id // marcamos con la anotacion @Id que el atributo debajo de este es una llave primaria
     @GeneratedValue(strategy = GenerationType.SEQUENCE) // agregamos el tipo de estrategia para incrementar el id
-    int id;
-    String nombre;
-    String apellido;
+    private int id;
+    private String nombre;
+    private String apellido;
     @Temporal(TemporalType.DATE) // marcamos con la anotacion @Temporal para indicar que es una fecha en la db
-    Date fecha_nacimiento;
+    private Date fecha_nacimiento;
+    @OneToOne // anotacion para indicar a JPA que la relacion es de 1 a 1
+    private Carrera carrera;
     
     public Alumno(){
         
     }
     
-    public Alumno(int id, String nombre, String apellido, Date fecha_nacimiento){
+    public Alumno(int id, String nombre, String apellido, Date fecha_nacimiento, Carrera carrera){
         this.id = id;
         this.nombre = nombre;
         this.apellido = apellido;
         this.fecha_nacimiento = fecha_nacimiento;
+        this.carrera = carrera;
     }
     
     public int getId(){
@@ -66,5 +70,13 @@ public class Alumno implements Serializable {
     
     public void setFecha_nacimiento(Date fecha_nacimiento){
         this.fecha_nacimiento = fecha_nacimiento;
+    }
+    
+    public Carrera getCarrera(){
+        return this.carrera;
+    }
+    
+    public void setCarrera(Carrera carrera){
+        this.carrera = carrera;
     }
 }
