@@ -81,4 +81,28 @@ public class Controlador {
         controladorPersistencia.eliminarCarrera(id);
     }
     
+    // ---------- Materia ---------------------
+    public void crearMateria(Materia materia){
+        controladorPersistencia.crearMateria(materia);
+    }
+    
+    public ArrayList<Materia> obtenerMaterias(){
+        List<Materia> materias = controladorPersistencia.obtenerMaterias();
+        ArrayList<Materia> materiasList = new ArrayList<>(materias);
+        return materiasList;
+    }
+    
+    public Materia obtenerMateria(int id){
+        Materia materia = controladorPersistencia.obtenerMateria(id);
+        return materia;
+    }
+    
+    public void actualizarMateria(Materia materia){
+        controladorPersistencia.actualizarMateria(materia);
+    }
+    
+    public void eliminarMateria(int id){
+        controladorPersistencia.eliminarMateria(id);
+    }
+    
 }

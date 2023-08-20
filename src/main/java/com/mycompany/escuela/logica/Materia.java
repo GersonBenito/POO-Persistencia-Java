@@ -1,12 +1,11 @@
 package com.mycompany.escuela.logica;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
+import javax.persistence.ManyToOne;
 
 /**
  *
@@ -14,23 +13,25 @@ import javax.persistence.OneToMany;
  */
 
 @Entity
-public class Carrera implements Serializable {
+public class Materia implements Serializable{
     
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private int id;
     private String nombre;
-    @OneToMany(mappedBy = "carrera") // relacion de 1 a n bidireccional, indicando con que atributo se va hacer la relacion
-    private ArrayList<Materia> materia;
+    private String tipo;
+    @ManyToOne // es necasario indicar la relacion para que sea una relacion bidireccional
+    private Carrera carrera;
     
-    public Carrera(){
+    public Materia(){
     
     }
     
-    public Carrera(int id, String nombre, ArrayList<Materia> materia){
+    public Materia(int id, String nombre, String tipo, Carrera carrera){
         this.id = id;
         this.nombre = nombre;
-        this.materia = materia;
+        this.tipo = tipo;
+        this.carrera = carrera;
     }
     
     public int getId(){
@@ -49,11 +50,19 @@ public class Carrera implements Serializable {
         this.nombre = nombre;
     }
     
-    public ArrayList<Materia> getMateria(){
-        return this.materia;
+    public String getTipo(){
+        return this.tipo;
     }
     
-    public void setMateria(ArrayList<Materia> materia){
-        this.materia = materia;
+    public void setTipo(String tipo){
+        this.tipo = tipo;
+    }
+    
+    public Carrera getCarrera(){
+        return this.carrera;
+    }
+    
+    public void setCarrera(Carrera carrera){
+        this.carrera = carrera;
     }
 }

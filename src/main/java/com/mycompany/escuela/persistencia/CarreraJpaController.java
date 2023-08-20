@@ -1,16 +1,18 @@
 package com.mycompany.escuela.persistencia;
 
 import com.mycompany.escuela.logica.Carrera;
-import com.mycompany.escuela.persistencia.exceptions.NonexistentEntityException;
 import java.io.Serializable;
+import javax.persistence.Query;
+import javax.persistence.EntityNotFoundException;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
+import com.mycompany.escuela.logica.Materia;
+import com.mycompany.escuela.persistencia.exceptions.NonexistentEntityException;
+import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
-import javax.persistence.Query;
-import javax.persistence.EntityNotFoundException;
 import javax.persistence.Persistence;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Root;
 
 /**
  *
@@ -23,7 +25,7 @@ public class CarreraJpaController implements Serializable {
     }
     
     public CarreraJpaController(){
-        emf = Persistence.createEntityManagerFactory("escuelaJPAPU");
+            emf = Persistence.createEntityManagerFactory("escuelaJPAPU");
     }
     private EntityManagerFactory emf = null;
 
@@ -32,11 +34,29 @@ public class CarreraJpaController implements Serializable {
     }
 
     public void create(Carrera carrera) {
+        if (carrera.getMateria() == null) {
+            carrera.setMateria(new ArrayList<Materia>());
+        }
         EntityManager em = null;
         try {
             em = getEntityManager();
             em.getTransaction().begin();
+            ArrayList<Materia> attachedMateria = new ArrayList<Materia>();
+            for (Materia materiaMateriaToAttach : carrera.getMateria()) {
+                materiaMateriaToAttach = em.getReference(materiaMateriaToAttach.getClass(), materiaMateriaToAttach.getId());
+                attachedMateria.add(materiaMateriaToAttach);
+            }
+            carrera.setMateria(attachedMateria);
             em.persist(carrera);
+            for (Materia materiaMateria : carrera.getMateria()) {
+                Carrera oldCarreraOfMateriaMateria = materiaMateria.getCarrera();
+                materiaMateria.setCarrera(carrera);
+                materiaMateria = em.merge(materiaMateria);
+                if (oldCarreraOfMateriaMateria != null) {
+                    oldCarreraOfMateriaMateria.getMateria().remove(materiaMateria);
+                    oldCarreraOfMateriaMateria = em.merge(oldCarreraOfMateriaMateria);
+                }
+            }
             em.getTransaction().commit();
         } finally {
             if (em != null) {
@@ -50,7 +70,34 @@ public class CarreraJpaController implements Serializable {
         try {
             em = getEntityManager();
             em.getTransaction().begin();
+            Carrera persistentCarrera = em.find(Carrera.class, carrera.getId());
+            ArrayList<Materia> materiaOld = persistentCarrera.getMateria();
+            ArrayList<Materia> materiaNew = carrera.getMateria();
+            ArrayList<Materia> attachedMateriaNew = new ArrayList<Materia>();
+            for (Materia materiaNewMateriaToAttach : materiaNew) {
+                materiaNewMateriaToAttach = em.getReference(materiaNewMateriaToAttach.getClass(), materiaNewMateriaToAttach.getId());
+                attachedMateriaNew.add(materiaNewMateriaToAttach);
+            }
+            materiaNew = attachedMateriaNew;
+            carrera.setMateria(materiaNew);
             carrera = em.merge(carrera);
+            for (Materia materiaOldMateria : materiaOld) {
+                if (!materiaNew.contains(materiaOldMateria)) {
+                    materiaOldMateria.setCarrera(null);
+                    materiaOldMateria = em.merge(materiaOldMateria);
+                }
+            }
+            for (Materia materiaNewMateria : materiaNew) {
+                if (!materiaOld.contains(materiaNewMateria)) {
+                    Carrera oldCarreraOfMateriaNewMateria = materiaNewMateria.getCarrera();
+                    materiaNewMateria.setCarrera(carrera);
+                    materiaNewMateria = em.merge(materiaNewMateria);
+                    if (oldCarreraOfMateriaNewMateria != null && !oldCarreraOfMateriaNewMateria.equals(carrera)) {
+                        oldCarreraOfMateriaNewMateria.getMateria().remove(materiaNewMateria);
+                        oldCarreraOfMateriaNewMateria = em.merge(oldCarreraOfMateriaNewMateria);
+                    }
+                }
+            }
             em.getTransaction().commit();
         } catch (Exception ex) {
             String msg = ex.getLocalizedMessage();
@@ -79,6 +126,11 @@ public class CarreraJpaController implements Serializable {
                 carrera.getId();
             } catch (EntityNotFoundException enfe) {
                 throw new NonexistentEntityException("The carrera with id " + id + " no longer exists.", enfe);
+            }
+            ArrayList<Materia> materia = carrera.getMateria();
+            for (Materia materiaMateria : materia) {
+                materiaMateria.setCarrera(null);
+                materiaMateria = em.merge(materiaMateria);
             }
             em.remove(carrera);
             em.getTransaction().commit();

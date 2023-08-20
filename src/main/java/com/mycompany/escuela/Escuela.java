@@ -2,10 +2,11 @@ package com.mycompany.escuela;
 import com.mycompany.escuela.logica.Alumno;
 import com.mycompany.escuela.logica.Carrera;
 import com.mycompany.escuela.logica.Controlador;
+import com.mycompany.escuela.logica.Materia;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.TimeZone;
+//import java.util.TimeZone;
 
 /**
  *
@@ -18,37 +19,47 @@ public class Escuela {
         // creamos una instancia del controlador para acceder a sus metodos
         Controlador controlador = new Controlador();
         
-        //System.out.println("********* Metodos para la clase carrera ***********");
-        // crear una carrera
-        //Carrera carrera = new Carrera(1, "Ingeniería de telecomunicaciones");
+        // -------------- Crear arreglo de materias ---------------------------
+        ArrayList<Materia>materiasList = new ArrayList<>();
         
-        // agregar una nueva carrera en la base de datos
-        //controlador.crearCarrera(carrera);
+        // -------------- Crear carrera de materias ---------------------------
+        Carrera carrera = new Carrera(1, "Ingeniería de sistemas", materiasList);
         
-        // obtener una carrera
-        //Carrera onlyCarrera = controlador.obtenerCarrera(1);
-        //System.out.println("Carrera: " + onlyCarrera.getNombre());
+        // -------------- Guardar la carrera en la BD -------------------------
+        controlador.crearCarrera(carrera);
         
-        System.out.println("\n********* Metodos para la clase alumno ***********");
-        // creamos una instancia de un Alumno para crear un nuevo alumno
-        // al crear un nuevo alumno le asociamos una carrera
-        //Alumno alumno = new Alumno(1, "JAIME", "MOLINA", new Date(), onlyCarrera);
+        // -------------- Crear materias --------------------------------------
+        Materia materia1 = new Materia(1, "Fundamentos de Programación", "Ciclo 1", carrera);
+        Materia materia2 = new Materia(1, "Bases de Datos", "Ciclo 1", carrera);
+        Materia materia3 = new Materia(1, "Análisis y Diseño de Sistemas", "Ciclo 2", carrera);
+        // -------------- Guardar materias en la DB ---------------------------
+        controlador.crearMateria(materia1);
+        controlador.crearMateria(materia2);
+        controlador.crearMateria(materia3);
+        // -------------- Agregar las materias a la lista ---------------------
+        materiasList.add(materia1);
+        materiasList.add(materia2);
+        materiasList.add(materia3);
         
-        // almacenamos el alumno en la base de datos
-        //controlador.crearAlumno(alumno);
+        // -------------- Actualizar la materia con la lista de tareas --------
+        carrera.setMateria(materiasList);
+        controlador.actualizarCarrera(carrera);
         
-        System.out.println("******* DATOS DEL ALUMNO ********\n");
-        Alumno datosAlumno = controlador.obtenerAlumno(3);
-        System.out.println("Nombre: " + datosAlumno.getNombre());
-        System.out.println("Apellido: " + datosAlumno.getApellido());
-        System.out.println(datosAlumno.getFecha_nacimiento());
-        System.out.println("Fecha de nacimiento: " + formatearFecha(datosAlumno.getFecha_nacimiento()));
-        System.out.println("Carrera: " + datosAlumno.getCarrera().getNombre());
+        // -------------- Crear alumno ----------------------------------------
+        Alumno alumno = new Alumno(1, "SUSANA", "ANDRADE", new Date(), carrera);
+        
+        // -------------- Guardar alumno en la DB -----------------------------
+        controlador.crearAlumno(alumno);
     }
     
+    /**
+     * metodo para formatear fechas
+     * @param fecha de tipo Date
+     * @return una fecha en el formato dd/mm/yyyy
+     */
     public static String formatearFecha(Date fecha){
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd/mm/yyyy");
-        dateFormat.setTimeZone(TimeZone.getTimeZone("DST"));
+        //dateFormat.setTimeZone(TimeZone.getTimeZone("DST"));
         return dateFormat.format(fecha);
     }
 }

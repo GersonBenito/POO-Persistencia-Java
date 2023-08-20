@@ -1,6 +1,7 @@
 package com.mycompany.escuela.persistencia;
 import com.mycompany.escuela.logica.Alumno;
 import com.mycompany.escuela.logica.Carrera;
+import com.mycompany.escuela.logica.Materia;
 import com.mycompany.escuela.persistencia.exceptions.NonexistentEntityException;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,6 +15,7 @@ public class ControladorPersistencia {
     // creamos una instancia del contola de alumnos de JPA
     AlumnoJpaController alumnoControllerJPA = new AlumnoJpaController();
     CarreraJpaController carreraControllerJPA = new CarreraJpaController();
+    MateriaJpaController materiaControllerJPA = new MateriaJpaController();
     
     /**
      * metodo encargado de crear un nuevo alumno
@@ -102,6 +104,41 @@ public class ControladorPersistencia {
             System.out.println("Carrera eliminado correctamente");
         }catch(NonexistentEntityException e){
             System.out.println("Error al eliminar " + e.getMessage());
+        }
+    }
+    
+    // ---------------- Materia --------------------------
+    
+    public void crearMateria(Materia materia){
+        materiaControllerJPA.create(materia);
+    }
+    
+    public ArrayList<Materia> obtenerMaterias(){
+        List<Materia> materias = materiaControllerJPA.findMateriaEntities();
+        ArrayList<Materia> materiasList = new ArrayList<>(materias);
+        return materiasList;
+    }
+    
+    public Materia obtenerMateria(int id){
+        Materia materia = materiaControllerJPA.findMateria(id);
+        return materia;
+    }
+    
+    public void actualizarMateria(Materia materia){
+        try{
+           materiaControllerJPA.edit(materia);
+           System.out.println("Materia actualizado correctamente");
+        }catch(Exception e){
+            System.out.println("Error al actualizar carrera: " + e.getMessage());
+        }
+    }
+    
+    public void eliminarMateria(int id){
+        try{
+            materiaControllerJPA.destroy(id);
+            System.out.println("Materia eliminado correctamente");
+        }catch(NonexistentEntityException e){
+            System.out.println("Error al eliminar una materia: " + e.getMessage());
         }
     }
 }
