@@ -56,4 +56,11 @@ public class Carrera implements Serializable {
     public void setMateria(ArrayList<Materia> materia){
         this.materia = materia;
     }
+    
+    // metodo limpiar datos
+    public void limpiar(){
+        this.id = 0;
+        this.nombre = "";
+        this.materia.clear();
+    }
 }

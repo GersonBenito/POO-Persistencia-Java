@@ -65,4 +65,12 @@ public class Materia implements Serializable{
     public void setCarrera(Carrera carrera){
         this.carrera = carrera;
     }
+    
+    // limpiar materias
+    public void limpiar(){
+        this.id = 0;
+        this.nombre = "";
+        this.tipo = "";
+        this.carrera.limpiar();
+    }
 }

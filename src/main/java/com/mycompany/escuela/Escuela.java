@@ -1,65 +1,130 @@
 package com.mycompany.escuela;
-import com.mycompany.escuela.logica.Alumno;
+
 import com.mycompany.escuela.logica.Carrera;
 import com.mycompany.escuela.logica.Controlador;
 import com.mycompany.escuela.logica.Materia;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
-//import java.util.TimeZone;
+import java.util.Scanner;
 
 /**
  *
  * @author Gerson Benito
  */
 public class Escuela {
+    
+    // Intancia de la clase controlador de persistencia a nivel global de la clase
+    private static Controlador controldor = new Controlador();
 
     public static void main(String[] args) {
         
-        // creamos una instancia del controlador para acceder a sus metodos
-        Controlador controlador = new Controlador();
+        int opcionMantenimiento;
+        boolean salir = false;
         
-        // -------------- Crear arreglo de materias ---------------------------
-        ArrayList<Materia>materiasList = new ArrayList<>();
+        // ---------- Instancia de la clase Scanner
+        Scanner scanner = new Scanner(System.in);
         
-        // -------------- Crear carrera de materias ---------------------------
-        Carrera carrera = new Carrera(1, "Ingeniería de sistemas", materiasList);
+        do{
+            // ---------- Menu mantenimiento---------------
+            System.out.println("\n---------- Menu mantenimiento -------------------");
+            System.out.println("| [1] Carrera                                    |");
+            System.out.println("| [2] Materia                                    |");
+            System.out.println("| [3] Alumno                                     |");
+            System.out.println("-------------------------------------------------\n");
+            System.out.print("Ingrese un numero del menu o ingreso -1 para salir: ");
+            opcionMantenimiento = scanner.nextInt();
+            
+            // ---------- verificar opcion seleccionado
+            if(opcionMantenimiento != -1){
+                subMenu(scanner, opcionMantenimiento);
+            }else{
+                salir = true;
+                scanner.close();
+            }
+            
+        }while(salir == false);
         
-        // -------------- Guardar la carrera en la BD -------------------------
-        controlador.crearCarrera(carrera);
-        
-        // -------------- Crear materias --------------------------------------
-        Materia materia1 = new Materia(1, "Fundamentos de Programación", "Ciclo 1", carrera);
-        Materia materia2 = new Materia(1, "Bases de Datos", "Ciclo 1", carrera);
-        Materia materia3 = new Materia(1, "Análisis y Diseño de Sistemas", "Ciclo 2", carrera);
-        // -------------- Guardar materias en la DB ---------------------------
-        controlador.crearMateria(materia1);
-        controlador.crearMateria(materia2);
-        controlador.crearMateria(materia3);
-        // -------------- Agregar las materias a la lista ---------------------
-        materiasList.add(materia1);
-        materiasList.add(materia2);
-        materiasList.add(materia3);
-        
-        // -------------- Actualizar la materia con la lista de tareas --------
-        carrera.setMateria(materiasList);
-        controlador.actualizarCarrera(carrera);
-        
-        // -------------- Crear alumno ----------------------------------------
-        Alumno alumno = new Alumno(1, "SUSANA", "ANDRADE", new Date(), carrera);
-        
-        // -------------- Guardar alumno en la DB -----------------------------
-        controlador.crearAlumno(alumno);
     }
     
-    /**
-     * metodo para formatear fechas
-     * @param fecha de tipo Date
-     * @return una fecha en el formato dd/mm/yyyy
-     */
-    public static String formatearFecha(Date fecha){
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/mm/yyyy");
-        //dateFormat.setTimeZone(TimeZone.getTimeZone("DST"));
-        return dateFormat.format(fecha);
+    public static void subMenu(Scanner scanner, int opcionMantenimiento){
+        int opcionSubMenu;
+        // ---------- SubMenu mantenimiento---------------
+        System.out.println("\n---------- Opciones CRUD ----------------------");
+        System.out.println("| [1] Agregar "+categoria(opcionMantenimiento)+"        |");
+        System.out.println("| [2] Mostrar "+categoria(opcionMantenimiento)+"        |");
+        System.out.println("| [3] Actualizar "+categoria(opcionMantenimiento)+"     |");
+        System.out.println("| [4] Eliminar "+categoria(opcionMantenimiento)+"       |");
+        System.out.println("-------------------------------------------------\n");
+        System.out.print("Ingrese un numero del submenu: ");
+        opcionSubMenu = scanner.nextInt();
+        
+        // ---- resetear scanner 
+        scanner.nextLine();
+        
+        if(opcionSubMenu == 1){
+            agregar(scanner, opcionMantenimiento);
+        }
+    }
+    
+    public static String categoria(int opcionMantenimiento){
+        return opcionMantenimiento == 1 ? "Carrera" : opcionMantenimiento == 2 ? "Materia": "Alumno";
+    }
+    
+    public static void agregar(Scanner scanner, int opcionMantenimiento){
+        if(opcionMantenimiento == 1){
+            Carrera carrera = new Carrera();
+            Materia materia = new Materia();
+            ArrayList<Materia> materiasList = new ArrayList<>();
+            
+            int numeroMaterias;
+            String confirmacion;
+            
+            // ------- Ingresar datos
+            carrera.setId(1);
+            System.out.print("Igrese el nombre de la " +categoria(opcionMantenimiento)+" : ");
+            carrera.setNombre(scanner.nextLine());
+            System.out.print("Ingrese el numero de materias: ");
+            numeroMaterias = scanner.nextInt();
+            
+            // ---- resetear scanner 
+            scanner.nextLine();
+            
+            // ------- agregar las materias a la lista
+            for(int i = 0; i < numeroMaterias; i++){
+                materia.setId(i);
+                System.out.print("Ingrese el nombre de la materia "+(i+1)+" : ");
+                materia.setNombre(scanner.nextLine());
+                System.out.print("Ingrese el tipo de la materia "+(i+1)+" : ");
+                materia.setTipo(scanner.nextLine());
+                materia.setCarrera(carrera);
+                materiasList.add(materia);
+            }
+            
+            // --------- Cofirmacion
+            System.out.print("Esta seguro de guardar la carrera ingresado [S/N]: ");
+            confirmacion = scanner.next();
+            
+            if(confirmacion.equals("S")){
+                // ---- Guardar carrera en la base de datos
+                controldor.crearCarrera(carrera);
+                
+                // Guard en base de datos las materias
+                for(Materia signatue: materiasList){
+                    controldor.crearMateria(signatue);
+                }
+                
+                // ------ Asignar materias a la carrera
+                carrera.setMateria(materiasList);
+                
+                // -------- actualizar carrera con las materias de la base
+                controldor.actualizarCarrera(carrera);
+                
+                System.out.println("--------Carrera guardado correctamente-------");
+            }else{
+                // ---- limpiar clases y arreglo
+                carrera.limpiar();
+                materia.limpiar();
+                materiasList.clear();
+            }
+        }
     }
 }
