@@ -1,4 +1,4 @@
-package estaticos;
+package resources;
 
 import com.mycompany.escuela.logica.Alumno;
 import com.mycompany.escuela.logica.Carrera;
@@ -12,7 +12,7 @@ import java.util.Date;
  *
  * @author Gerson Benito
  */
-public class Ejemplo {
+public class DatosEstaticos {
     public static void main(String[] args){
         // creamos una instancia del controlador para acceder a sus metodos
         Controlador controlador = new Controlador();
