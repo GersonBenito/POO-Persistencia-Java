@@ -13,7 +13,7 @@ import java.util.Scanner;
 public class Escuela {
     
     // Intancia de la clase controlador de persistencia a nivel global de la clase
-    private static Controlador controldor = new Controlador();
+    private static final Controlador controldor = new Controlador();
 
     public static void main(String[] args) {
         
@@ -193,17 +193,24 @@ public class Escuela {
                     System.out.print("Estas seguro de eliminar la carrera " + carrera.getNombre() + " [S/N]: ");
                     opcion = scanner.next();
                     
-                    // TODO: revisar
                     if(opcion.equals("S")){
                         // eliminar las carreras asociados a las carreras
                         for(Materia materia : carrera.getMateria()){
-                            controldor.eliminarCarrera(materia.getId());
+                            controldor.eliminarMateria(materia.getId());
                         }
                         
                         // eliminar la carrera
                         controldor.eliminarCarrera(carrera.getId());
-                        //System.out.println("Carrera " + carrera.getNombre() + " eliminado correctamente");
+                        System.out.println("Carrera " + carrera.getNombre() + " eliminado correctamente");
                         confirmacion = true;
+                    }else{
+                        System.out.print("Desea ingresar un nuevo id [S/N] ?: ");
+                        opcion = scanner.next();
+                        if(opcion.equals("S")){
+                            confirmacion = false;
+                        }else{
+                            confirmacion = true;
+                        }
                     }
                 }else{
                     System.out.println("\n-----------------------------------------------");
@@ -211,12 +218,12 @@ public class Escuela {
                     System.out.println("-------------------------------------------------\n");
                     System.out.print("Desea ingresar un nuevo id [S/N] ?: ");
                     opcion = scanner.next();
-                    if(!opcion.equals("S")){
+                    if(opcion.equals("N")){
                         confirmacion = true;
                     }
                 }
             
-            }while(confirmacion == true);
+            }while(confirmacion == false);
         }
     }
 }
