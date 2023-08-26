@@ -63,6 +63,14 @@ public class Escuela {
         if(opcionSubMenu == 1){
             agregar(scanner, opcionMantenimiento);
         }
+        
+        if(opcionSubMenu == 2){
+            mostrar(opcionMantenimiento);
+        }
+        
+        if(opcionSubMenu == 4){
+            eliminar(scanner, opcionMantenimiento);
+        }
     }
     
     public static String categoria(int opcionMantenimiento){
@@ -72,7 +80,6 @@ public class Escuela {
     public static void agregar(Scanner scanner, int opcionMantenimiento){
         if(opcionMantenimiento == 1){
             Carrera carrera = new Carrera();
-            Materia materia = new Materia();
             ArrayList<Materia> materiasList = new ArrayList<>();
             
             int numeroMaterias;
@@ -90,6 +97,10 @@ public class Escuela {
             
             // ------- agregar las materias a la lista
             for(int i = 0; i < numeroMaterias; i++){
+                
+                // crear instancia de materia para almacenar materias
+                Materia materia = new Materia();
+                
                 materia.setId(i);
                 System.out.print("Ingrese el nombre de la materia "+(i+1)+" : ");
                 materia.setNombre(scanner.nextLine());
@@ -97,6 +108,7 @@ public class Escuela {
                 materia.setTipo(scanner.nextLine());
                 materia.setCarrera(carrera);
                 materiasList.add(materia);
+                
             }
             
             // --------- Cofirmacion
@@ -108,8 +120,8 @@ public class Escuela {
                 controldor.crearCarrera(carrera);
                 
                 // Guard en base de datos las materias
-                for(Materia signatue: materiasList){
-                    controldor.crearMateria(signatue);
+                for(Materia signature: materiasList){
+                    controldor.crearMateria(signature);
                 }
                 
                 // ------ Asignar materias a la carrera
@@ -120,11 +132,91 @@ public class Escuela {
                 
                 System.out.println("--------Carrera guardado correctamente-------");
             }else{
+                Materia materia = new Materia();
                 // ---- limpiar clases y arreglo
                 carrera.limpiar();
                 materia.limpiar();
                 materiasList.clear();
             }
+        }
+    }
+    
+    public static void mostrar(int opcionMantenimiento){
+        if(opcionMantenimiento == 1){
+            
+            //usamos los metodos del controlador
+            ArrayList<Carrera> carrerasList = controldor.obtenerCarreras();
+            
+            // recorrer las carreras si no esta vacio
+            if(!carrerasList.isEmpty()){
+                System.out.println("\n--------- Carreras -------------");
+                // recorremos el arreglo de las carreras
+                for(Carrera carrera : carrerasList){
+                    System.out.println("Id carrera: " + carrera.getId());
+                    System.out.println("Nombre carrera: " + carrera.getNombre());
+                    System.out.println("Numero de materias: " + carrera.getMateria().size());
+                    System.out.println("----Materias asociados a la carrera");
+                    
+                    // recorrer las materias asociados a la carrera
+                    for(Materia materia : carrera.getMateria()){
+                        System.out.println("Id materia: " + materia.getId());
+                        System.out.println("Nombre materia: " + materia.getNombre());
+                        System.out.println("Tipo materia: " + materia.getTipo());
+                    }
+                    System.out.println("----------------------------------\n");
+                }
+                
+            }else{
+                System.out.println("\n-----------------------------------------");
+                System.out.println("| A un no hay carreras para mostrar     |");
+                System.out.println("-----------------------------------------\n");
+            }
+        }
+    }
+    
+    public static void eliminar(Scanner scanner, int opcionMantenimiento){
+        
+        boolean confirmacion = false;
+        String opcion;
+        int id;
+        
+        if(opcionMantenimiento == 1){
+            do{
+                System.out.print("Ingrese el id a eliminar: ");
+                id = scanner.nextInt();
+                // resetear la clase scanner
+                scanner.nextLine();
+                
+                Carrera carrera = controldor.obtenerCarrera(id);
+                if(carrera != null){
+                    // confirmacion del usuario
+                    System.out.print("Estas seguro de eliminar la carrera " + carrera.getNombre() + " [S/N]: ");
+                    opcion = scanner.next();
+                    
+                    // TODO: revisar
+                    if(opcion.equals("S")){
+                        // eliminar las carreras asociados a las carreras
+                        for(Materia materia : carrera.getMateria()){
+                            controldor.eliminarCarrera(materia.getId());
+                        }
+                        
+                        // eliminar la carrera
+                        controldor.eliminarCarrera(carrera.getId());
+                        //System.out.println("Carrera " + carrera.getNombre() + " eliminado correctamente");
+                        confirmacion = true;
+                    }
+                }else{
+                    System.out.println("\n-----------------------------------------------");
+                    System.out.println("| No se encontro ninguna carrera con el id      |");
+                    System.out.println("-------------------------------------------------\n");
+                    System.out.print("Desea ingresar un nuevo id [S/N] ?: ");
+                    opcion = scanner.next();
+                    if(!opcion.equals("S")){
+                        confirmacion = true;
+                    }
+                }
+            
+            }while(confirmacion == true);
         }
     }
 }
