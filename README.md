@@ -12,3 +12,4 @@ Practica Programacion Orientado a Objetos usando persistencia con el ORM JPA y c
 
 ## Consola
 ![consola](src/main/java/resources/outpu-java.png)
+![consola](src/main/java/resources/outpu-2-java.png)
