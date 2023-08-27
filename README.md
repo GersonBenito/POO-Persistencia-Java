@@ -4,7 +4,7 @@ Practica Programacion Orientado a Objetos usando persistencia con el ORM JPA y c
 ## Diagrama DER
 ![DER](src/main/java/resources/DER.png)
 
-## Codigo BB
+## Codigo DB
 ![db](src/main/java/resources/db.png)
 
 ## Consulta de alumno
