@@ -47,7 +47,7 @@ public class Escuela {
                 scanner.close();
             }
 
-        } while (salir == false);
+        } while (!salir);
 
     }
 
@@ -72,6 +72,10 @@ public class Escuela {
 
         if (opcionSubMenu == 2) {
             mostrar(opcionMantenimiento);
+        }
+
+        if (opcionSubMenu == 3) {
+            actualizar(scanner, opcionMantenimiento);
         }
 
         if (opcionSubMenu == 4) {
@@ -266,7 +270,7 @@ public class Escuela {
                     System.out.println("\n-----------------------------------------------");
                     System.out.println("| No se encontro ninguna carrera con el id      |");
                     System.out.println("-------------------------------------------------\n");
-                    System.out.print("Desea ingresar un nuevo id [S/N] ?: ");
+                    System.out.println("Desea ingresar un nuevo id [S/N] ?: ");
                     opcion = scanner.next();
                     if (opcion.equals("N")) {
                         confirmacion = true;
@@ -295,14 +299,182 @@ public class Escuela {
                     System.out.println("\n-----------------------------------------------");
                     System.out.println("| No se encontro ningun alumno con el id        |");
                     System.out.println("-------------------------------------------------\n");
-                    System.out.print("Desea ingresar un nuevo id [S/N] ?: ");
+                    System.out.println("Desea ingresar un nuevo id [S/N] ?: ");
                     opcion = scanner.next();
                     if (opcion.equals("N")) {
                         confirmacion = true;
                     }
                 }
             }
-        } while (confirmacion == false);
+        } while (!confirmacion);
+    }
+
+    public static void actualizar(Scanner scanner, int opcionMantenimiento) {
+
+        boolean confirmacion = false;
+        String opcion;
+        int id;
+
+        do {
+
+            System.out.println("\n------- Actualizar datos ------------------\n");
+            System.out.println("Ingrese el id a actualizar: ");
+            id = scanner.nextInt();
+            // resetear la clase scanner
+            scanner.nextLine();
+
+            if (opcionMantenimiento == 1) {
+
+                // buscar la carrera con id proporcionado
+                Carrera carrera = controldor.obtenerCarrera(id);
+
+                // mostrarle los datos actuales
+                if (carrera != null) {
+                    System.out.println("\n--------- Datos de la carrera a actualizar -------------");
+                    System.out.println("Id carrera: " + carrera.getId());
+                    System.out.println("Nombre carrera: " + carrera.getNombre());
+                    System.out.println("Numero de materias: " + carrera.getMateria().size());
+                    System.out.println("----Materias asociados a la carrera");
+
+                    // recorrer las materias asociados a la carrera
+                    for (Materia materia : carrera.getMateria()) {
+                        System.out.println("Id materia: " + materia.getId());
+                        System.out.println("Nombre materia: " + materia.getNombre());
+                        System.out.println("Tipo materia: " + materia.getTipo());
+                    }
+                    System.out.println("----------------------------------\n");
+
+                    System.out.println("Ingrese el nuevo nombre de la carrera: ");
+                    carrera.setNombre(scanner.nextLine());
+
+                    // confirmacion del usuario
+                    System.out.println("Estas seguro de actualizar la carrera " + carrera.getNombre() + " [S/N]: ");
+                    opcion = scanner.next();
+
+                    if (opcion.equals("S")) {
+                        controldor.actualizarCarrera(carrera);
+                        System.out.println("------- Carrera " + carrera.getNombre() + " actualizado correctamente -----------");
+                        confirmacion = true;
+                    } else {
+                        System.out.println("Desea ingresar un nuevo id [S/N] ?: ");
+                        opcion = scanner.next();
+                        confirmacion = !opcion.equals("S");
+                    }
+
+                } else {
+                    System.out.println("\n-----------------------------------------------");
+                    System.out.println("| No se encontro ninguna carrera con el id      |");
+                    System.out.println("-------------------------------------------------\n");
+                    System.out.println("Desea ingresar un nuevo id [S/N] ?: ");
+                    opcion = scanner.next();
+                    if (opcion.equals("N")) {
+                        confirmacion = true;
+                    }
+                }
+            }
+
+            if (opcionMantenimiento == 2) {
+                
+                // instancia de la clase para actualizar
+                Alumno alumno = new Alumno();
+                // buscar alumno de la DB
+                Alumno alumnoSelect = controldor.obtenerAlumno(id);
+
+                String cambioCarrera;
+
+                if (alumnoSelect != null) {
+                    System.out.println("\n--------- Datos del alumno a actualizar -------------");
+                    System.out.println("Id alumno: " + alumnoSelect.getId());
+                    System.out.println("Nombre del alumno: " + alumnoSelect.getNombre());
+                    System.out.println("Apellido del alumno: " + alumnoSelect.getApellido());
+                    System.out.println("Fecha de nacimiento del alumno: " + formatearFecha(alumnoSelect.getFecha_nacimiento()));
+                    System.out.println("Carrera seleccioado: " + alumnoSelect.getCarrera().getNombre());
+                    System.out.println("----------------------------------\n");
+
+                    alumno.setId(alumnoSelect.getId());
+                    // solicitar nuevos datos
+                    System.out.println("Ingrese el nuevo nombre del alumno: ");
+                    alumno.setNombre(scanner.nextLine());
+                    System.out.println("Ingrese el nuevo apellido del alumno: ");
+                    alumno.setApellido(scanner.nextLine());
+
+                    // consultar si desde cambiar de carrera
+                    System.out.println("Desea cambiar de carrera al alumno [S/N]: ");
+                    cambioCarrera = scanner.next();
+
+                    if (cambioCarrera.equals("S")) {
+                        // bandera para verificar el ingreso del id
+                        boolean isValid = false;
+                        String cambio;
+                        // mostrarle la lista de carreras disponibles
+                        mostrar(1);
+
+                        // soolicitar el ingreso de la nueva carrera
+                        do {
+                            System.out.println("Ingrese el id de la carrera: ");
+                            Carrera carrera = controldor.obtenerCarrera(scanner.nextInt());
+
+                            if (carrera != null) {
+                                alumno.setCarrera(carrera);
+                                alumno.setFecha_nacimiento(alumnoSelect.getFecha_nacimiento());
+
+                            } else {
+                                System.out.println("\n-----------------------------------------------");
+                                System.out.println("| No se encontro ningun carrera con el id      |");
+                                System.out.println("-------------------------------------------------\n");
+                                System.out.println("Desea ingresar un nuevo id [S/N] ?: ");
+                                cambio = scanner.next();
+
+                                isValid = !cambio.equals("S");
+                            }
+                        } while (isValid);
+
+                        // confirmacion del usuario
+                        System.out.println("Estas seguro de actualizar el alumno " + alumnoSelect.getNombre() + " con los nuevos datos? [S/N]");
+                        opcion = scanner.next();
+
+                        if (opcion.equals("S")) {
+                            controldor.actualizarAlumno(alumno);
+                            System.out.println("------- Alumno " + alumnoSelect.getNombre() + " actualizado correctamente -----------");
+                            confirmacion = true;
+                        } else {
+                            System.out.println("Desea ingresar un nuevo id [S/N] ?: ");
+                            opcion = scanner.next();
+                            confirmacion = !opcion.equals("S");
+                        }
+                    } else {
+                        // confirmacion del usuario
+                        System.out.println("Estas seguro de actualizar el alumno " + alumnoSelect.getNombre() + " con los nuevos datos? [S/N]");
+                        opcion = scanner.next();
+
+                        if (opcion.equals("S")) {
+                            // asignamos las carreras y fecha que ya tenia el alumno
+                            alumno.setCarrera(alumnoSelect.getCarrera());
+                            alumno.setFecha_nacimiento(alumnoSelect.getFecha_nacimiento());
+                            controldor.actualizarAlumno(alumno);
+                            System.out.println("------- Alumno " + alumnoSelect.getNombre() + " actualizado correctamente -----------");
+                            confirmacion = true;
+                        } else {
+                            System.out.println("Desea ingresar un nuevo id [S/N] ?: ");
+                            opcion = scanner.next();
+                            confirmacion = !opcion.equals("S");
+                        }
+                    }
+
+                } else {
+                    System.out.println("\n-----------------------------------------------");
+                    System.out.println("| No se encontro ningun alumno con el id      |");
+                    System.out.println("-------------------------------------------------\n");
+                    System.out.println("Desea ingresar un nuevo id [S/N] ?: ");
+                    opcion = scanner.next();
+                    if (opcion.equals("N")) {
+                        confirmacion = true;
+                    }
+                }
+
+            }
+
+        } while (!confirmacion);
     }
 
     /**
